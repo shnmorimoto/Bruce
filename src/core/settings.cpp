@@ -494,29 +494,31 @@ void runClockLoop() {
   delay(300);
 
   for (;;){
-  if(millis()-tmp>1000) {
-    #if !defined(HAS_RTC)
-      updateTimeStr(rtc.getTimeStruct());
-    #endif
-    Serial.print("Current time: ");
-    Serial.println(timeStr);
-    tft.setTextColor(FGCOLOR,BGCOLOR);
-    tft.drawRect(10, 10, WIDTH-15,HEIGHT-15, FGCOLOR);
-    tft.setCursor(64, HEIGHT/3+5);
-    tft.setTextSize(4);
-    #if defined(HAS_RTC)
-      _rtc.GetBm8563Time();
-      _rtc.GetTime(&_time);
-      char timeString[9];  // Buffer para armazenar a string formatada "HH:MM:SS"
-      snprintf(timeString, sizeof(timeString), "%02d:%02d:%02d", _time.Hours, _time.Minutes, _time.Seconds);
-      tft.drawCentreString(timeString,WIDTH/2,HEIGHT/2-13,1);
-    #else
-      tft.drawCentreString(timeStr,WIDTH/2,HEIGHT/2-13,1);
-    #endif
-    tmp=millis();
-  }
+    if(millis()-tmp>1000) {
+      #if !defined(HAS_RTC)
+        Serial.print("[FALSE] rtc is not working!!!");
+        updateTimeStr(rtc.getTimeStruct());
+      #endif
+      Serial.print("Current time: ");
+      Serial.println(timeStr);
+      tft.setTextColor(FGCOLOR,BGCOLOR);
+      tft.drawRect(10, 10, WIDTH-15,HEIGHT-15, FGCOLOR);
+      tft.setCursor(64, HEIGHT/3+5);
+      tft.setTextSize(4);
+      #if defined(HAS_RTC)
+        Serial.print("[TRUE] rtc is working!!!");
+        _rtc.GetBm8563Time();
+        _rtc.GetTime(&_time);
+        char timeString[9];  // Buffer para armazenar a string formatada "HH:MM:SS"
+        snprintf(timeString, sizeof(timeString), "%02d:%02d:%02d", _time.Hours, _time.Minutes, _time.Seconds);
+        tft.drawCentreString(timeString,WIDTH/2,HEIGHT/2-13,1);
+      #else
+        tft.drawCentreString(timeStr,WIDTH/2,HEIGHT/2-13,1);
+      #endif
+      tmp=millis();
+    }
 
-   // Checks para sair do loop
+    // Checks para sair do loop
     if(checkSelPress() or checkEscPress()) { // Apertar o botão power dos sticks
       tft.fillScreen(BGCOLOR);
       returnToMenu=true;
