@@ -434,7 +434,6 @@ void setClock() {
                 timeClient.update();
                 localTime = myTZ.toLocal(timeClient.getEpochTime());
                 Serial.println("Current time: " + timeClient.getFormattedTime());
-                Serial.println("Local time: " + localTime);
                 #if !defined(HAS_RTC)
                   rtc.setTime(timeClient.getEpochTime());
                 #endif
