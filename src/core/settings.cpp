@@ -434,7 +434,13 @@ void setClock() {
                 timeClient.update();
                 localTime = myTZ.toLocal(timeClient.getEpochTime());
                 Serial.println("Current time: " + timeClient.getFormattedTime());
-                #if !defined(HAS_RTC)
+                #if defined(HAS_RTC)
+                  struct tm *timeinfo = localtime(&localTime);
+                  TimeStruct.Hours   = timeinfo->tm_hour;
+                  TimeStruct.Minutes = timeinfo->tm_min;
+                  TimeStruct.Seconds = timeinfo->tm_sec;
+                  _rtc.SetTime(&TimeStruct);
+                #else
                   rtc.setTime(timeClient.getEpochTime());
                 #endif
 
@@ -506,7 +512,7 @@ void runClockLoop() {
       tft.setCursor(64, HEIGHT/3+5);
       tft.setTextSize(4);
       #if defined(HAS_RTC)
-        Serial.print("[TRUE] rtc is working!!!");
+        Serial.print("[TRUE] rtc is working!!!"); 
         _rtc.GetBm8563Time();
         _rtc.GetTime(&_time);
         char timeString[9];  // Buffer para armazenar a string formatada "HH:MM:SS"
